@@ -1,4 +1,5 @@
-import PasswordValidator from '../solution.js';
+import PasswordValidator from './validator.js';
+import { describe, expect, test } from "@jest/globals";
 
 describe('PasswordValidator', () => {
     test('testValidateWithDefaultOptions', () => {

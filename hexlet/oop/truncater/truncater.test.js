@@ -1,4 +1,4 @@
-import Truncater from './trancate.js';
+import Truncater from './solution/trancate.js';
 import { describe, expect, test } from "@jest/globals";
 
 describe('Truncater', () => {
@@ -11,7 +11,7 @@ describe('Truncater', () => {
         [{ length: 7 }, 'one two'],
     ];
 
-    test('Truncater with default options', () => {
+    describe('Truncater with default options', () => {
 
         test.each(cases1)('extend options: %o', (params, expected) => {
             const truncater = new Truncater();
@@ -26,7 +26,7 @@ describe('Truncater', () => {
         [{ length: 7 }, 'one two'],
     ];
 
-    test('Truncater with custom length', () => {
+    describe('Truncater with custom length', () => {
         const truncater = new Truncater({ length: 3 });
 
         test.each(cases2)('extend options: %o', (params, expected) => {
@@ -41,7 +41,7 @@ describe('Truncater', () => {
         [{}, 'one two'],
     ];
 
-    test('Truncater with custom separator', () => {
+    describe('Truncater with custom separator', () => {
         const truncater = new Truncater({ separator: '__' });
 
         test.each(cases3)('extend options: %o', (params, expected) => {
