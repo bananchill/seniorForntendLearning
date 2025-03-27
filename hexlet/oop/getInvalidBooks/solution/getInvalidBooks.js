@@ -5,7 +5,7 @@ const allowedGenres = ['fiction', 'non-fiction', 'fantasy', 'biography'];
 
 // Схема валидации книги
 const bookSchema = yup.object().shape({
-    name: yup.().required(),
+    name: yup.string().required(),
     author: yup.string().required(),
     pagesCount: yup.number().integer().positive().optional(),
     link: yup.string()
