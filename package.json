@@ -14,7 +14,9 @@
   "description": "",
   "dependencies": {
     "@jest/globals": "^29.7.0",
-    "jest": "^29.7.0"
+    "date-fns": "^4.1.0",
+    "jest": "^29.7.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@babel/cli": "^7.26.4",
