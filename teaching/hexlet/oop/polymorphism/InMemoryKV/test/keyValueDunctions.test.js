@@ -1,4 +1,4 @@
-import InMemoryKV from '../InMemoryKV.js';
+import InMemoryKV from '../InMemoryKv.js';
 import swapKeyValue from '../keyValueFunctions.js';
 import { describe, expect, it } from "@jest/globals";
 

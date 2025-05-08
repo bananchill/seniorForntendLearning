@@ -1,4 +1,4 @@
-import { createRomanProxy } from "./rim";
+import { createRomanProxy } from "./rim.js";
 import { describe, expect, test } from "@jest/globals";
 
 const getRomanValue = (roman, numeralChain) => {

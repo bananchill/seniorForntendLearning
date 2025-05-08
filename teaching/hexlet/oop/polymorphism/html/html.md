@@ -25,13 +25,13 @@
 ## Пример использования
 
 ```javascript
-import getLinks from './html.js';
+import getLinks from './html.md';
 
 const tags = [
-  { name: 'img', src: 'hexlet.io/assets/logo.png' },
-  { name: 'div' },
-  { name: 'link', href: 'hexlet.io/assets/style.css' },
-  { name: 'h1' },
+    {name: 'img', src: 'hexlet.io/assets/logo.png'},
+    {name: 'div'},
+    {name: 'link', href: 'hexlet.io/assets/style.css'},
+    {name: 'h1'},
 ];
 
 const links = getLinks(tags);

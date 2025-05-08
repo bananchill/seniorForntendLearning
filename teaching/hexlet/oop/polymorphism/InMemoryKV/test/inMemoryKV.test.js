@@ -1,7 +1,7 @@
 // @ts-check
 
 import _ from 'lodash';
-import InMemoryKV from '../InMemoryKV.js';
+import InMemoryKV from '../InMemoryKv.js';
 import { describe, expect, it } from "@jest/globals";
 
 describe('InMemoryKV', () => {

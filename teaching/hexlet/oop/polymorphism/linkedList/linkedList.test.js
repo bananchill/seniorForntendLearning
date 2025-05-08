@@ -1,4 +1,4 @@
-import Node from './solution/Node';
+import Node from './solution/Node.js';
 import reverse from './solution/linkedList.js';
 import { describe, expect, it } from "@jest/globals";
 

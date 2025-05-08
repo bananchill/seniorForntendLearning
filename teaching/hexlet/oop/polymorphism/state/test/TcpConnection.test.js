@@ -1,4 +1,4 @@
-import TcpConnection from '../TcpConnection.js';
+import TcpConnection from '../TCPConnection.js';
 import {describe, expect, test} from "@jest/globals";
 
 describe("TcpConnection", () => {
