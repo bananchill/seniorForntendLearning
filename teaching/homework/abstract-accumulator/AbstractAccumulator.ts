@@ -1,7 +1,8 @@
-export default class AbstractAccumulator {
-    value = 0
-    constructor(value = 0) {
-        this.value = value;
+export abstract class AbstractAccumulator {
+    protected _value = 0;
+
+    protected constructor(value = 0) {
+        this._value = value;
         this.read();
     }
 
