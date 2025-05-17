@@ -1,8 +1,7 @@
 import Accumulator from "../Accumulator";
 import WrongAccumulator from "../WrongAccumulator";
-import AbstractAccumulator from "../AbstractAccumulator";
 import {describe, expect, it} from "@jest/globals";
-
+import {AbstractAccumulator} from "../AbstractAccumulator";
 
 
 describe('state', () => {
@@ -13,6 +12,7 @@ describe('state', () => {
 
         expect(accumulator.value).toEqual(12);
         expect(() => new WrongAccumulator()).toThrow();
+        // @ts-expect-error
         expect(() => new AbstractAccumulator()).toThrow();
     });
 

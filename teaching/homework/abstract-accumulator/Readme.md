@@ -26,7 +26,7 @@ accumulator.read(12);
 accumulator.read(1);
 accumulator.read(5);
 
-console.log(accumulator.value); // 18
+console.log(accumulator._value); // 18
 ```
 
 ### Описание классов
