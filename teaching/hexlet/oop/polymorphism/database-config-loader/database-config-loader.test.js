@@ -1,6 +1,6 @@
-import path from 'path';
-import DatabaseConfigLoader from './database-config-loader.js';
 import { describe, expect, it } from "@jest/globals";
+import path from "path";
+import DatabaseConfigLoader from "./database-config-loader";
 
 describe('DatabaseConfigLoader', () => {
     const pathToConfigs = path.join('__fixtures__');

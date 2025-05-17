@@ -1,6 +1,5 @@
 import Accumulator from "../Accumulator";
 import WrongAccumulator from "../WrongAccumulator";
-import {describe, expect, it} from "@jest/globals";
 import {AbstractAccumulator} from "../AbstractAccumulator";
 
 
