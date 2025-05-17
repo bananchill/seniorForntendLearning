@@ -4,7 +4,7 @@ import path from 'path';
 import { describe, expect, test } from "@jest/globals";
 
 describe("weather", () => {
-    const pathToConfigs = path.join('hexlet/oop/polymorphism/dependencyInversion/bin/weather.js');
+    const pathToConfigs = path.join('hexlet/oop/polymorphism/dependency-inversion/bin/weather.js');
     test('berlin', () => {
         const expected = expect.stringMatching(/Temperature in berlin: \d+C/);
         const actual = execSync(`node ${ pathToConfigs } berlin`).toString();
