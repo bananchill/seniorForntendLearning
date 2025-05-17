@@ -1,5 +1,5 @@
 import InMemoryKV from '../InMemoryKv.js';
-import swapKeyValue from '../keyValueFunctions.js';
+import swapKeyValue from '../key-value-functions.js';
 import { describe, expect, it } from "@jest/globals";
 
 describe("keyValueFunction", () => {
