@@ -1,17 +1,18 @@
+import {EventBus} from "@/app/event/EvetBus";
+
 export interface IBaseRenderOptions {
     components: IComponentConstructorBase[]
+    bus: EventBus;
 }
 
 export interface IComponentConstructorBase {
     new(...args: any[]): IComponentBase;
 
-    readonly className: string;
+    readonly _className: string;
 }
 
 export interface IComponentBase {
-    readonly className: string;
-
-    toHtml(): string;
+    toHtml<Data = any>(data?: Data): string;
 
     init(): void;
 

@@ -24,13 +24,12 @@ export class Dom implements IDom {
         return this._el.outerHTML.trim();
     }
 
-    append(node: Dom | HTMLElement): IDom | string {
+    append(node: Dom | HTMLElement): IDom {
         const element = node instanceof Dom ? node._el : node;
 
         this._el.append(element);
         return this;
     }
-
 
     clear(): Dom {
         this.html('');

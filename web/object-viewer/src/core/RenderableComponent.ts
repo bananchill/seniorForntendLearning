@@ -3,12 +3,17 @@ import {IBaseRenderOptions, IComponentBase, IComponentConstructorBase} from "@/t
 import {IDom} from "@/types";
 
 export class RenderableComponent {
-    _el: IDom;
-    private options: IBaseRenderOptions;
-    components: IComponentBase[] = [];
+    private _app: IDom;
+    private _options: IBaseRenderOptions;
+    _components: IComponentBase[] = [];
+
     constructor(selector: string, options: IBaseRenderOptions) {
-        this._el = new Dom(selector);
-        this.options = options || {};
+        this._app = new Dom(selector);
+        this._options = options || {};
+    }
+
+    get app() {
+        return this._app;
     }
 
     private create(tagName: string, classes= ''): IDom {
@@ -22,10 +27,10 @@ export class RenderableComponent {
     getRoot() {
         const $root = this.create('div', '');
 
-        this.components = this.options.components.map((Component) => {
-            const _el = this.create('div', Component.className);
+        this._components = this._options.components.map((Component) => {
+            const _el = this.create('div', Component._className);
 
-            const component = new Component(_el);
+            const component = new Component(_el,  this._options.bus);
 
             _el.html(component.toHtml());
 
@@ -38,9 +43,9 @@ export class RenderableComponent {
     }
 
     render() {
-        this._el.append(this.getRoot());
+        this._app.append(this.getRoot());
 
-        this.components.forEach((component) => {
+        this._components.forEach((component) => {
             component.init();
         });
     }

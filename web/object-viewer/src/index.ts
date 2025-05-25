@@ -1,7 +1,10 @@
-import App from "@/app/app.";
-import Input from "@/component/input/Input";
+import AppController from "@/app/AppController";
+import InputFile from "@/component/input/file/InputFile";
+import InputText from "@/component/input/text/InputText";
+import {EventBus} from "@/app/event/EvetBus";
 
-const app = new App('#app', {
-    components: [Input]
+const app = new AppController('#app', {
+    components: [InputText, InputFile],
+    bus: new EventBus()
 })
 app.start()

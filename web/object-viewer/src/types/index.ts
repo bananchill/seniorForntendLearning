@@ -1,3 +1,5 @@
+import {EventBus} from "@/app/event/EvetBus";
+
 export interface IDom {
     _el: HTMLElement
 
@@ -8,7 +10,10 @@ export interface IDom {
     on(eventType: string, callback: any): void
 
     off(eventType: string, callback: any): void
+
     getCoords(): DOMRect
+
+    append(node: this | HTMLElement): IDom
 
     findAll(selector: string): NodeListOf<Element>
 
@@ -18,13 +23,23 @@ export interface IDom {
 }
 
 export interface IIDomListener {
+    readonly _options: IEventListenerOptions;
+
     initDomListeners(): void;
 
     removeDomListeners(): void;
 
-    readonly _listeners: string[]
+    subscribeEvent(event: string, callback: Function): void;
+
+    unsubscribeEvent(event: string, callback: Function): void;
+
+    emitEventBus<Event extends string, Data = Object>(event: Event, data: Data): void;
 }
 
-export interface IComponentBaseOption {
-    listeners: string[];
+export interface IEventListenerOptions<Listeners = string> {
+    listeners: Listeners[];
+    bus: EventBus
 }
+
+
+export type ICustomEvent<Data = Object> = CustomEvent<Data>
