@@ -1,0 +1,21 @@
+{
+  "name": "object-viewer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev:object-viewer": "vite --config ./vite.config.ts --open",
+    "build:object-viewer": "vite build --config ./vite.config.ts",
+    "start": "node index.js",
+    "build": "babel src --out-dir dist",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}

@@ -1,5 +1,6 @@
-export default class ObjectViewer  {
-    constructor(private _object: any) {
+export default class Store {
+    private _object: any
+    constructor() {
     }
 
     set object(object: any) {

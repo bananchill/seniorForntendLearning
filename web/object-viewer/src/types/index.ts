@@ -1,5 +1,10 @@
 import {EventBus} from "@/app/event/EvetBus";
 
+export interface EventObjectData {
+    info: Record<string, any>,
+    item: Record<string, any>
+}
+
 export interface IDom {
     _el: HTMLElement
 

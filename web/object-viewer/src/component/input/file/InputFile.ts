@@ -57,7 +57,6 @@ export default class InputFile extends Input {
 
         try {
             const data = await this.readFileAsJson(file);
-            console.log(this)
             this.eventBus.emit('file:data', data);
         } catch (err) {
             this._error = (err as Error).message;
