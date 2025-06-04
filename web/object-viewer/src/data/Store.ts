@@ -1,5 +1,7 @@
 export default class Store {
     private _object: any
+    private _currentLvl = 0
+
     constructor() {
     }
 
@@ -11,4 +13,12 @@ export default class Store {
         return this._object;
     }
 
+
+    get currentLvl(): number {
+        return this._currentLvl;
+    }
+
+    set currentLvl(value: number) {
+        this._currentLvl = value;
+    }
 }
