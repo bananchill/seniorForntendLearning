@@ -1,15 +1,18 @@
-import {IDom} from "@types";
 import Input from "@/component/base/input/Input";
-import {EventBus} from "@/app/event/EvetBus";
+import {IComponentOptions, IDom} from "@types";
 
 export default class InputText extends Input {
-    readonly _className = 'inputText';
+    static readonly _className: string = 'inputText';
 
-    constructor(readonly _el: IDom, readonly eventBus: EventBus) {
-        super(_el, {
+    constructor(readonly _options: IComponentOptions) {
+        super({
             listeners: ['input'],
-            bus: eventBus,
+            bus: _options.bus,
+            selector: 'div',
+            root: _options.root,
         })
+
+
     }
 
     toHtml(): string {

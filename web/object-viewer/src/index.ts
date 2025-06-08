@@ -1,10 +1,7 @@
-import AppController from "@/app/AppController";
-import InputFile from "@/component/input/file/InputFile";
-import InputText from "@/component/input/text/InputText";
-import {EventBus} from "@/app/event/EvetBus";
+import AppController from "@/app/app-controller";
+import {EventBus} from "@core/evet-bus";
+import {Dom} from "@core/Dom";
 
-const app = new AppController('#app', {
-    components: [InputText, InputFile],
-    bus: new EventBus()
-})
-app.start()
+
+const app = new AppController(new EventBus(), new Dom('#app'))
+app.render()

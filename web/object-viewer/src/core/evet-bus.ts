@@ -1,11 +1,11 @@
 export class EventBus {
     private target = new EventTarget();
 
-    on<E extends string>(event: E, cb: (detail: any) => void) {
+    on<E extends string>(event: E, cb: Function) {
         this.target.addEventListener(event, e => cb((e as CustomEvent).detail));
     }
 
-    off<E extends string>(event: E, cb: (detail: any) => void) {
+    off<E extends string>(event: E, cb: Function) {
         this.target.removeEventListener(event, e => cb((e as CustomEvent).detail));
     }
 

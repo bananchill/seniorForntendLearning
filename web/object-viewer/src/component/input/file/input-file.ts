@@ -1,17 +1,20 @@
-import {IDom} from "@types";
 import Input from "@/component/base/input/Input";
-import {EventBus} from "@/app/event/EvetBus";
 import {EventObject} from "@/types/events";
+import {IComponentOptions, IDom} from "@types";
+
+const defaultOptions = {
+    listeners: ['change'],
+    selector: 'div',
+}
 
 export default class InputFile extends Input {
     static readonly _className = 'inputFile';
     _error: string | null = null;
 
-    constructor(readonly _el: IDom, readonly eventBus: EventBus) {
-        super(_el, {
-            listeners: ['change'],
-            bus: eventBus
-        })
+    constructor(readonly _options: IComponentOptions) {
+        const merge = Object.assign(defaultOptions, _options)
+        super(merge);
+        this._options = merge
 
         this.onChange = this.onChange.bind(this)
     }
@@ -45,8 +48,10 @@ export default class InputFile extends Input {
     }
 
     async onChange(event: Event) {
+        event.preventDefault();
         const target = event.target as HTMLInputElement;
         const file = target.files?.[0];
+
         if (!file) return;
 
         const isJsonMime = file.type === 'application/json';
@@ -58,7 +63,7 @@ export default class InputFile extends Input {
 
         try {
             const data = await this.readFileAsJson(file);
-            this.eventBus.emit(EventObject.Set, data);
+            this._options.bus.emit(EventObject.Set, data);
         } catch (err) {
             this._error = (err as Error).message;
         }

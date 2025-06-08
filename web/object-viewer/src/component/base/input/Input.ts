@@ -1,11 +1,11 @@
-import {BaseComponent} from "@core/BaseComponent";
-import {IEventListenerOptions, IDom} from "@types";
+import {BaseComponent} from "@core/base-component";
+import {IComponentOptions} from "@types";
 
 export default class Input extends BaseComponent {
-    _className = "inputBase"
+    static readonly _className: string = "inputBase"
 
-    constructor(readonly _el: IDom, readonly _options: IEventListenerOptions) {
-        super(_el, _options)
+    constructor(protected readonly _options: IComponentOptions) {
+        super(_options)
     }
 
     toHtml(): string {

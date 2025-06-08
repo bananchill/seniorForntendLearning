@@ -1,14 +1,9 @@
 import {getListenerMethodName} from "@utils/string";
-import {IDom, IEventListenerOptions, IIDomListener} from "@/types";
+import {IComponentOptions, IIDomListener} from "@/types";
 
 export class DomListener implements IIDomListener {
     [key: string]: any;
-
-    constructor(protected readonly _el: IDom, readonly _options: IEventListenerOptions) {
-        if (!_el) {
-            throw new Error('No $root provided for DomListener!');
-        }
-
+    constructor(protected readonly _options: IComponentOptions) {
         this.subscribeEvent = this.subscribeEvent.bind(this);
         this.unsubscribeEvent = this.unsubscribeEvent.bind(this);
         this.initDomListeners = this.initDomListeners.bind(this);
@@ -16,11 +11,11 @@ export class DomListener implements IIDomListener {
     }
 
     subscribeEvent(event: string, callback: Function) {
-        this._el.on(event, callback);
+        this._options.root.on(event, callback);
     }
 
     unsubscribeEvent(event: string, callback: Function) {
-        this._el.off(event, callback);
+        this._options.root.off(event, callback);
     }
 
 
@@ -29,11 +24,11 @@ export class DomListener implements IIDomListener {
     }
 
     initDomListeners() {
-        this._options.listeners.forEach((listener) => {
+        this._options.listeners?.forEach((listener) => {
             const method = getListenerMethodName(listener);
 
             if (typeof this[method] !== "function") {
-                throw new Error(`Method ${method} is not implemented in DomListener Component!`);
+                return;
             }
 
             this[method] = this[method].bind(this);
@@ -42,7 +37,7 @@ export class DomListener implements IIDomListener {
     }
 
     removeDomListeners() {
-        this._options.listeners.forEach((listener) => {
+        this._options.listeners?.forEach((listener) => {
             const method = getListenerMethodName(listener);
             if (!this[method]) {
                 return;

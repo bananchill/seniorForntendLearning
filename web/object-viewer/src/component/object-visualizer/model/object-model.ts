@@ -1,9 +1,8 @@
-export default class Store {
+export default class ObjectModel {
     private _object: any
     private _currentLvl = 0
 
-    constructor() {
-    }
+    constructor() {}
 
     set object(object: any) {
         this._object = object;
