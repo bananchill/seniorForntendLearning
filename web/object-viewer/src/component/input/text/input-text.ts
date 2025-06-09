@@ -1,10 +1,13 @@
 import Input from "@/component/base/input/Input";
-import {IComponentOptions, IDom} from "@types";
+import {IComponentOptions, IComponentProps, IDom} from "@types";
 
 export default class InputText extends Input {
-    static readonly _className: string = 'inputText';
-
-    constructor(readonly _options: IComponentOptions) {
+    static readonly _componentOptions: IComponentOptions = {
+        attrs: {
+            class: "inputText"
+        }
+    }
+    constructor(readonly _options: IComponentProps) {
         super({
             listeners: ['input'],
             bus: _options.bus,
@@ -17,8 +20,8 @@ export default class InputText extends Input {
 
     toHtml(): string {
         return `
-             <label for="` + InputText._className + `">Вставьте объект</label>
-             <input id="objectInput" type="text"/>`
+             <label for="inputText">Вставьте объект</label>
+             <input id="inputText" type="text"/>`
     }
 
 

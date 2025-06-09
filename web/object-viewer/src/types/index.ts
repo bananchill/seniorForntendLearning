@@ -15,7 +15,7 @@ export interface IEventListenerOptions<Listeners = string> extends IDefaultOptio
     listeners?: Listeners[];
 }
 
-export type TInstanceInitialize = IInstanceControllers | IInstanceComponent
+export type TInstanceInitialize<T = any> = IInstanceControllers<T> | IInstanceComponent<T>
 
 
 

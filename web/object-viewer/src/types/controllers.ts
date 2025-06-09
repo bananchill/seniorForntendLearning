@@ -1,5 +1,5 @@
 import {IDefaultOptionComponent} from "@/types/index";
 
-export interface IInstanceControllers {
-    new(_options: IDefaultOptionComponent): any;
+export interface IInstanceControllers<T> {
+    new(_options: IDefaultOptionComponent): T;
 }

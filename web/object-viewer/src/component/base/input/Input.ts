@@ -1,10 +1,13 @@
 import {BaseComponent} from "@core/base-component";
-import {IComponentOptions} from "@types";
+import {IComponentOptions, IComponentProps} from "@types";
 
 export default class Input extends BaseComponent {
-    static readonly _className: string = "inputBase"
-
-    constructor(protected readonly _options: IComponentOptions) {
+    static readonly _componentOptions: IComponentOptions = {
+        attrs: {
+            class: "inputBase"
+        }
+    }
+    constructor(protected readonly _options: IComponentProps) {
         super(_options)
     }
 

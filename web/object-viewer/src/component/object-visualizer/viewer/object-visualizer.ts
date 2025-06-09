@@ -2,7 +2,8 @@ import {detectType} from "@utils/type";
 import {getColorByValue} from "@utils/color";
 import {EventObject} from "@/types/events";
 import {BaseComponent} from "@core/base-component";
-import {IComponentOptions, IDefaultOptionComponent} from "@types";
+import {IComponentOptions, IComponentProps, IDefaultOptionComponent, IDom} from "@types";
+import {createComponent} from "@utils/component/base";
 
 const defaultOptions = {
     listeners: [EventObject.Next, EventObject.Prev],
@@ -11,8 +12,17 @@ const defaultOptions = {
 
 export default class ObjectVisualizer extends BaseComponent {
     readonly _className = "objectVisualizer";
+    static readonly _componentOptions: IComponentOptions = {
+        attrs: {
+            class: "objectVisualizer"
+        }
+    }
+    private nextLvl: Function | null = null
+    private prevLvl: Function | null = null
+    private getObject: Function | null = null
+    private _history: any;
 
-    constructor(readonly _options: IComponentOptions) {
+    constructor(readonly _options: IComponentProps) {
         const merge = {...defaultOptions, ..._options};
 
         super(merge);
@@ -24,10 +34,31 @@ export default class ObjectVisualizer extends BaseComponent {
         return detectType(data) === "object"
     }
 
-    onSetObject(data: Record<string, any>) {
+    bindNextLvl(handler: Function) {
+        this.nextLvl = handler;
     }
 
+    bindPrevLvl(handler: Function) {
+        this.prevLvl = handler;
+    }
 
+    visibleNextLvl() {
+        this.nextLvl?.()
+    }
+
+    hideCurrentLvl() {
+        this.prevLvl?.()
+    }
+
+    bindGetObject(handler: Function) {
+        this.getObject = handler
+    }
+
+    paintFirstLvl() {
+        const el =this.toHtml(this.getObject?.())
+        console.log(el)
+        this.appendComponent(el)
+    }
 
     // private getLVLName() {
     //     return `${this._className}_${this._currentPoint}`;
@@ -53,24 +84,42 @@ export default class ObjectVisualizer extends BaseComponent {
     // }
 
 
-    toHtml<Data = Record<string, any>>(data?: Data): string {
+    toHtml<T = IDom>(data?: any, lvl = 0): T {
         if (!this.isObject(data)) {
             console.debug(`${data} is not an object`);
-            return `<div> No Data </div>`
+            return createComponent('div', {attrs: {data: 'No Data '}}) as T
         }
 
-        let html = `<div> {`
+        let html = createComponent('div', {
+            text: '{'
+        })
         for (let dataKey in data) {
-            if (this.isObject(data[dataKey])) {
-                continue;
+            const componentOptions: IComponentOptions = {
+                styles: {
+                    color: getColorByValue(data[dataKey]),
+                },
+                attrs: {
+                    'data-keyParent': `${dataKey}_${lvl}`,
+                },
+                data: {
+                },
+                text: `${dataKey}: ${this.isObject(data[dataKey]) ? '{}' : JSON.stringify(data[dataKey])}`,
             }
+            const newEl = createComponent('div', componentOptions)
+            // html += `<div data-keyParent="" style=\" color: ${}\"> ${dataKey}`
+            // if (this.isObject(data[dataKey])) {
+            //     html += `:{  ...  }, </div>`
+            // } else {
+            //     html += `: ${JSON.stringify(data[dataKey])}, </div>`
+            // }
 
-            html += `<div data-lvl="${1}" data-keyParent="${dataKey}" style=\" color: ${getColorByValue(typeof data[dataKey])}\"> ${dataKey} </div>`
+            html.append(newEl);
         }
 
-        html += `} </div>`
+        html.append(createComponent('div', {
+            text: '}'
+        }))
 
-        return html
+        return html as T
     }
-
 }

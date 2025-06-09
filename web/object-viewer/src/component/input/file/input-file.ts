@@ -1,6 +1,6 @@
 import Input from "@/component/base/input/Input";
 import {EventObject} from "@/types/events";
-import {IComponentOptions, IDom} from "@types";
+import {IComponentOptions, IComponentProps, IDom} from "@types";
 
 const defaultOptions = {
     listeners: ['change'],
@@ -8,10 +8,14 @@ const defaultOptions = {
 }
 
 export default class InputFile extends Input {
-    static readonly _className = 'inputFile';
+    static readonly _componentOptions: IComponentOptions = {
+        attrs: {
+            class: "inputFile"
+        }
+    }
     _error: string | null = null;
 
-    constructor(readonly _options: IComponentOptions) {
+    constructor(readonly _options: IComponentProps) {
         const merge = Object.assign(defaultOptions, _options)
         super(merge);
         this._options = merge
@@ -21,7 +25,7 @@ export default class InputFile extends Input {
 
     toHtml(): string {
         return `
-             <label for="` + InputFile._className + `">Выберете файл с объектом</label>
+             <label for="inputFile">Выберете файл с объектом</label>
              <input id="inputFile" type="file" accept=".json"/>`
     }
 

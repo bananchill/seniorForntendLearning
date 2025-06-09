@@ -1,9 +1,9 @@
 import {getListenerMethodName} from "@utils/string";
-import {IComponentOptions, IIDomListener} from "@/types";
+import {IComponentProps, IIDomListener} from "@/types";
 
 export class DomListener implements IIDomListener {
     [key: string]: any;
-    constructor(protected readonly _options: IComponentOptions) {
+    constructor(protected readonly _options: IComponentProps) {
         this.subscribeEvent = this.subscribeEvent.bind(this);
         this.unsubscribeEvent = this.unsubscribeEvent.bind(this);
         this.initDomListeners = this.initDomListeners.bind(this);

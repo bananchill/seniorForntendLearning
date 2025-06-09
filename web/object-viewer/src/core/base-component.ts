@@ -1,29 +1,24 @@
-import {IComponentOptions, IDom} from "@/types";
+import {IComponentOptions, IComponentProps, IDom} from "@/types";
 import {DomListener} from "@core/dom-listener";
 import {createComponent, initializeAndMount} from "@utils/component/base";
 
 export class BaseComponent extends DomListener {
-    static readonly _className: string;
+    static readonly _componentOptions: IComponentOptions = {}
     private _components: any[] = [];
 
-    constructor(protected readonly _options: IComponentOptions) {
+    constructor(protected readonly _options: IComponentProps) {
         super(_options)
         this.init = this.init.bind(this);
         this.destroy = this.destroy.bind(this);
     }
 
     private createRoot() {
-        return createComponent('div', '');
+        return createComponent('div', {});
     }
 
 
-    appendComponent(Component: any, data?: any) {
-        const _el = createComponent('div', Component._className);
-        const newComponent = new Component(this._options.bus);
-        _el.html(newComponent.toHtml(data));
-        newComponent.init()
-        this._options.root.append(_el);
-        this._components.push(newComponent);
+    appendComponent(_element: IDom) {
+        this._options.root.append(_element);
         return this;
     }
 
@@ -53,8 +48,8 @@ export class BaseComponent extends DomListener {
 
     }
 
-    toHtml(data?: any) {
-        return ''
+    toHtml<T>(...args: any[]): T | string {
+       return ''
     }
 
     init() {

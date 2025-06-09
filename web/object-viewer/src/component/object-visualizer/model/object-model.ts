@@ -1,6 +1,7 @@
 export default class ObjectModel {
     private _object: any
     private _currentLvl = 0
+    private history = [];
 
     constructor() {}
 
@@ -19,5 +20,20 @@ export default class ObjectModel {
 
     set currentLvl(value: number) {
         this._currentLvl = value;
+    }
+
+    nextLvl() {
+        this._currentLvl += 1;
+    }
+
+    prevLvl() {
+        this._currentLvl -= 1;
+    }
+
+    hetObjectsCurrentLvl() {
+        const currentObjects: Record<string, any>[] = [];
+         Object.keys(this._object).map(el => {
+
+        } );
     }
 }
