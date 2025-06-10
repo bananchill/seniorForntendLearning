@@ -1,8 +1,4 @@
-import {IEventListenerOptions} from "@/types/index";
-
 export interface IDom {
-    _el: HTMLElement
-
     html(html?: string): IDom | string
 
     clear(): IDom
@@ -19,7 +15,8 @@ export interface IDom {
 
     css(styles: Record<string, any>): void
 
-    get data(): DOMStringMap
+    get data(): DOMStringMap;
+    get el(): HTMLElement;
 }
 
 export interface IIDomListener {

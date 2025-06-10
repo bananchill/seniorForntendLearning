@@ -30,6 +30,9 @@ export default class ObjectController {
         this._viewer.bindNextLvl(this._viewerModel.nextLvl)
         this._viewer.bindPrevLvl(this._viewerModel.prevLvl)
         this._viewer.bindGetObject(() => this._viewerModel.object)
+        this._viewer.bindGetCurrentLvl(() => this._viewerModel.currentLvl)
+        this._viewer.bindGetHistoryElById(() => this._viewerModel.getHistoryElById)
+        this._viewer.bindSetHistory(() => this._viewerModel.setHistoryEl)
 
         this._viewer.render()
         this._viewer.paintFirstLvl()

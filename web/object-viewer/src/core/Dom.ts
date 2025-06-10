@@ -2,7 +2,7 @@ import {IDom} from "@types";
 
 
 export class Dom implements IDom {
-    _el: HTMLElement;
+    private _el: HTMLElement;
 
     constructor(selector: string | HTMLElement) {
         const element = typeof selector == 'string' ? document.querySelector<HTMLElement>(selector) : selector;
@@ -56,6 +56,10 @@ export class Dom implements IDom {
         Object.keys(styles).forEach((key) => {
             this._el.style[key as any] = styles[key];
         });
+    }
+
+    get el() {
+        return this._el
     }
 
     get data() {

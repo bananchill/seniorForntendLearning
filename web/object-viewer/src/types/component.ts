@@ -1,4 +1,4 @@
-import { IEventListenerOptions, TInstanceInitialize} from "@/types/index";
+import {IDom, IEventListenerOptions, TInstanceInitialize} from "@/types/index";
 
 export interface IComponentProps<Components = any,Listeners = string> extends IEventListenerOptions<Listeners> {
     selector?: string;
@@ -31,5 +31,5 @@ export interface IComponentOptions {
 
     text?: string | number | boolean;
 
-    html?: string;
+    childElement?: IDom;
 }

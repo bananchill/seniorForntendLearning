@@ -4,6 +4,7 @@ import {EventObject} from "@/types/events";
 import {BaseComponent} from "@core/base-component";
 import {IComponentOptions, IComponentProps, IDefaultOptionComponent, IDom} from "@types";
 import {createComponent} from "@utils/component/base";
+import {createLogger} from "vite";
 
 const defaultOptions = {
     listeners: [EventObject.Next, EventObject.Prev],
@@ -11,16 +12,19 @@ const defaultOptions = {
 }
 
 export default class ObjectVisualizer extends BaseComponent {
-    readonly _className = "objectVisualizer";
+    static _selector = "objectVisualizer"
     static readonly _componentOptions: IComponentOptions = {
         attrs: {
-            class: "objectVisualizer"
+            class: ObjectVisualizer._selector
         }
     }
     private nextLvl: Function | null = null
     private prevLvl: Function | null = null
     private getObject: Function | null = null
-    private _history: any;
+    private getCurrentLvl: Function | null = null
+    private getHistoryElById: Function | null = null
+    private setHistoryEl: Function | null = null
+
 
     constructor(readonly _options: IComponentProps) {
         const merge = {...defaultOptions, ..._options};
@@ -42,84 +46,105 @@ export default class ObjectVisualizer extends BaseComponent {
         this.prevLvl = handler;
     }
 
-    visibleNextLvl() {
-        this.nextLvl?.()
-    }
-
-    hideCurrentLvl() {
-        this.prevLvl?.()
+    bindGetCurrentLvl(handler: Function) {
+        this.getCurrentLvl = handler;
     }
 
     bindGetObject(handler: Function) {
         this.getObject = handler
     }
 
-    paintFirstLvl() {
-        const el =this.toHtml(this.getObject?.())
-        console.log(el)
-        this.appendComponent(el)
+    bindGetHistoryElById(handler: Function) {
+        this.getHistoryElById = handler;
     }
 
-    // private getLVLName() {
-    //     return `${this._className}_${this._currentPoint}`;
-    // }
+    bindSetHistory(handler: Function) {
+        this.setHistoryEl = handler;
+    }
 
-    // private getCurrentNode() {
-    //     return document.querySelectorAll(this.getLVLName());
-    // }
+    visibleNextLvl() {
+        this.nextLvl?.();
+        this.replaceComponentBySelector(this.toHtml(this.getCurrentLvl?.() ?? 0, this.getObject?.()), ObjectVisualizer._selector);
+    }
 
-    // invisibleCurrentLvl() {
-    //     const currentLvlNode = this.getCurrentNode();
-    //     if (!Object.keys(currentLvlNode).length) {
-    //         return
-    //     }
-    //
-    //
-    //      this._currentPoint -= 1;
-    // }
-    //
-    // visibleNextLvl() {
-    //
-    //     this._currentPoint += 1;
-    // }
+    hideCurrentLvl() {
+        this.prevLvl?.()
+        this.replaceComponentBySelector(this.toHtml(this.getCurrentLvl?.() ?? 0, this.getObject?.()), ObjectVisualizer._selector);
+    }
 
+    paintFirstLvl() {
+        this.appendComponentByClass(this.toHtml(this.getCurrentLvl?.() ?? 0, this.getObject?.()), ObjectVisualizer._selector)
+    }
 
-    toHtml<T = IDom>(data?: any, lvl = 0): T {
+    private getCurrentKey(key: string, lvl = 0) {
+        return `${key}_${lvl}`
+    }
+
+    toHtml<T = IDom>(lvl = 0, data: any, nestedLvl = 0): T {
         if (!this.isObject(data)) {
             console.debug(`${data} is not an object`);
-            return createComponent('div', {attrs: {data: 'No Data '}}) as T
+            return createComponent('div', {attrs: {data: 'No Data'}}) as T;
         }
 
-        let html = createComponent('div', {
-            text: '{'
-        })
-        for (let dataKey in data) {
-            const componentOptions: IComponentOptions = {
-                styles: {
-                    color: getColorByValue(data[dataKey]),
-                },
-                attrs: {
-                    'data-keyParent': `${dataKey}_${lvl}`,
-                },
-                data: {
-                },
-                text: `${dataKey}: ${this.isObject(data[dataKey]) ? '{}' : JSON.stringify(data[dataKey])}`,
+        const root = createComponent('div', {text: '{'});
+
+        Object.entries(data).forEach(([dataKey, dataEl]) => {
+            const currentKey = this.getCurrentKey(dataKey, lvl);
+            const node = this.createNode({dataKey, dataEl, currentKey, nestedLvl});
+
+            root.append(node);
+            this.handleNestedObject(node, dataKey, dataEl, lvl);
+        });
+
+        root.el.innerHTML += '}'
+
+        console.log(root.html())
+        return root as T;
+    }
+
+    /** Создаёт узел списка с учётом типа значения. */
+    private createNode(
+        data: {
+            dataKey: string,
+            dataEl: unknown,
+            currentKey: string,
+            nestedLvl: number,
+        }
+    ): IDom {
+        let {dataEl, dataKey, currentKey, nestedLvl} = data
+        const options: IComponentOptions = {
+            styles: {color: getColorByValue(dataEl)},
+            attrs: {'data-key': currentKey},
+            data: {},
+            text: '',
+            childElement: undefined,
+        };
+        if (this.isObject(dataEl)) {
+            const lvl = this.getCurrentLvl?.() ?? 0;
+            options.text = `${dataKey}: {`
+
+            if (lvl > nestedLvl && this.getHistoryElById?.(dataKey)) {
+                nestedLvl += 1;
+                options.childElement = this.toHtml(nestedLvl, dataEl);
             }
-            const newEl = createComponent('div', componentOptions)
-            // html += `<div data-keyParent="" style=\" color: ${}\"> ${dataKey}`
-            // if (this.isObject(data[dataKey])) {
-            //     html += `:{  ...  }, </div>`
-            // } else {
-            //     html += `: ${JSON.stringify(data[dataKey])}, </div>`
-            // }
-
-            html.append(newEl);
+            options.text += '}';
+        } else {
+            options.text = `${dataKey}: ${JSON.stringify(dataEl)}`;
         }
 
-        html.append(createComponent('div', {
-            text: '}'
-        }))
+        return createComponent('div', options);
+    }
 
-        return html as T
+    /** Обрабатывает вложенные объекты (добавление в историю). */
+    private handleNestedObject(
+        node: IDom,
+        dataKey: string,
+        dataEl: unknown,
+        lvl?: number,
+    ): void {
+        if (this.isObject(dataEl)) {
+            const parentKey = this.getCurrentKey(dataKey, lvl ? lvl - 1 : 0);
+            this.setHistoryEl?.(node, this.getCurrentKey(dataKey, lvl), parentKey);
+        }
     }
 }

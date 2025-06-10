@@ -21,6 +21,7 @@ export default class ButtonHidden extends Button {
 
     onClick(event: Event): void {
         event.preventDefault()
+        event.stopImmediatePropagation()
         this._options.bus.emit(EButtonAction.Hidden, event)
     }
 }

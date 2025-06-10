@@ -20,6 +20,7 @@ export default class ButtonVisible extends Button {
 
     onClick(event: Event): void {
         event.preventDefault()
+        event.stopImmediatePropagation()
         this._options.bus.emit(EButtonAction.Visible, event)
     }
 }

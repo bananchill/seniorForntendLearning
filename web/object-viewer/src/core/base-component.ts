@@ -17,11 +17,62 @@ export class BaseComponent extends DomListener {
     }
 
 
-    appendComponent(_element: IDom) {
-        this._options.root.append(_element);
+    appendComponentByClass(_element: IDom, selector: string ) {
+        const el =  this._options.root.el.getElementsByClassName(selector);
+        el[0].append(_element.el);
         return this;
     }
 
+    replaceComponentBySelector(
+        _element: IDom,
+        selector: string,
+    ): this {
+        // 1. Контейнер, куда монтируем
+        const container = (this._options.root.el
+            .getElementsByClassName(selector)[0] as HTMLElement)
+
+        if (!container) {
+            console.warn(`[BaseComponent] container ".${selector}" not found`);
+            return this;
+        }
+
+        // 2. Массив новых нод (clone, чтобы не "утащить" из исходного компонента)
+        const incoming = Array.from(_element.el.children).map((node ) =>
+            node.cloneNode(true),
+        ) as HTMLElement[];
+
+        // 3. Добавление / замена
+        incoming.forEach((newNode) => {
+            const key = newNode.dataset.key;
+            if (!key) {
+                container.append(newNode);
+                return;
+            }
+
+            const current = container.querySelector<HTMLElement>(`[data-key="${key}"]`);
+            if (!current) {
+                container.append(newNode); // 3.4
+            } else if (!current.isEqualNode(newNode)) {
+                current.replaceWith(newNode); // 3.3
+            }
+        });
+
+        const incomingKeys = new Set(
+            incoming.map((n) => n.dataset.key).filter(Boolean) as string[],
+        );
+
+        Array.from(container.querySelectorAll<HTMLElement>('[data-key]')).forEach(
+            (node) => {
+                const key = node.dataset.key;
+                if (key && !incomingKeys.has(key)) {
+                    node.remove();
+                }
+            },
+        );
+
+
+        return this;
+    }
 
     private getRoot() {
         const $root = this.createRoot()

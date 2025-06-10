@@ -2,7 +2,7 @@ import {Dom} from "@core/Dom";
 import {BaseComponent} from "@core/base-component";
 import {IComponentOptions, IComponentProps, IDom, IInstanceComponent, TInstanceInitialize} from "@types";
 
-export const createComponent = (selector: string, {data = {}, props ={}, attrs = {}, styles = {}, html, text}: IComponentOptions = {}) => {
+export const createComponent = (selector: string, {data = {}, props ={}, attrs = {}, styles = {}, childElement, text}: IComponentOptions = {}) => {
     const el = document.createElement(selector);
     Object.entries(attrs).forEach(([name, value]) => {
         el.setAttribute(name, value);
@@ -19,9 +19,11 @@ export const createComponent = (selector: string, {data = {}, props ={}, attrs =
 
     Object.assign(el, props);
 
-    if (html !== undefined) {
-        el.innerHTML = html;
-    } else if (text !== undefined) {
+    if (childElement !== undefined) {
+        el.append(childElement.el);
+    }
+
+    if (text !== undefined) {
         el.textContent = String(text);
     }
     return new Dom(el) as IDom;

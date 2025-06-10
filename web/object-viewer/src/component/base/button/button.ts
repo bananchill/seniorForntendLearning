@@ -10,7 +10,7 @@ export default class Button extends BaseComponent {
     }
     constructor(readonly _options: IButtonOptions) {
         const {text, ...baseOption} = _options
-        super({...baseOption, listeners: ['click']})
+        super({...baseOption})
     }
 
     toHtml(): string {
@@ -19,6 +19,7 @@ export default class Button extends BaseComponent {
 
 
     onClick(event: Event): void {
-        console.log(event);
+        event.stopPropagation()
+        event.preventDefault()
     }
 }
