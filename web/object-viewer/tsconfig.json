@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    "paths": {
+      "@/*":     ["src/*"],
+      "@core/*": ["src/core/*"],
+      "@utils/*":["src/utils/*"],
+      "@types": ["src/types"]
+    }
+  },
+  "include": ["src"]
+}
