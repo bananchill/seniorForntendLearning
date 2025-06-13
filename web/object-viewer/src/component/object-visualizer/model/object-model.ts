@@ -30,12 +30,11 @@ export default class ObjectModel {
     }
 
     nextLvl() {
-        console.log(this.currentLvl);
         this._currentLvl = this._currentLvl + 1;
     }
 
     prevLvl() {
-        this._currentLvl -= 1;
+        this._currentLvl = this._currentLvl - 1;
     }
 
 

@@ -3,6 +3,7 @@ import {DomListener} from "@core/dom-listener";
 import {createComponent, initializeAndMount} from "@utils/component/base";
 
 export class BaseComponent extends DomListener {
+    static _selector = ""
     static readonly _componentOptions: IComponentOptions = {}
     private _components: any[] = [];
 
@@ -23,56 +24,98 @@ export class BaseComponent extends DomListener {
         return this;
     }
 
-    replaceComponentBySelector(
-        _element: IDom,
-        selector: string,
-    ): this {
-        // 1. Контейнер, куда монтируем
-        const container = (this._options.root.el
-            .getElementsByClassName(selector)[0] as HTMLElement)
-
-        if (!container) {
-            console.warn(`[BaseComponent] container ".${selector}" not found`);
-            return this;
-        }
-
-        // 2. Массив новых нод (clone, чтобы не "утащить" из исходного компонента)
-        const incoming = Array.from(_element.el.children).map((node ) =>
-            node.cloneNode(true),
-        ) as HTMLElement[];
-
-        // 3. Добавление / замена
-        incoming.forEach((newNode) => {
-            const key = newNode.dataset.key;
-            if (!key) {
-                container.append(newNode);
-                return;
+    private diffDom(target: HTMLElement, source: HTMLElement): void {
+        // 1. Синхронизация атрибутов узла
+        Array.from(source.attributes).forEach(attr => {
+            console.log(target.getAttribute(attr.name) !== attr.value)
+            if (target.getAttribute(attr.name) !== attr.value) {
+                target.setAttribute(attr.name, attr.value);
             }
-
-            const current = container.querySelector<HTMLElement>(`[data-key="${key}"]`);
-            if (!current) {
-                container.append(newNode); // 3.4
-            } else if (!current.isEqualNode(newNode)) {
-                current.replaceWith(newNode); // 3.3
+        });
+        Array.from(target.attributes).forEach(attr => {
+            if (!source.hasAttribute(attr.name)) {
+                target.removeAttribute(attr.name);
             }
         });
 
-        const incomingKeys = new Set(
-            incoming.map((n) => n.dataset.key).filter(Boolean) as string[],
-        );
+        // 2. Рекурсивная работа с детьми (только непосредственные)
+        const incomingChildren = Array.from(source.children) as HTMLElement[];
+        const processedKeys = new Set<string>();
 
-        Array.from(container.querySelectorAll<HTMLElement>('[data-key]')).forEach(
-            (node) => {
-                const key = node.dataset.key;
-                if (key && !incomingKeys.has(key)) {
-                    node.remove();
+        incomingChildren.forEach(incomingChild => {
+            const key = incomingChild.dataset.key;
+
+            // — Без ключа: работаем по позиции
+            if (!key) {
+                const idx = incomingChildren.indexOf(incomingChild);
+                const currentChild = target.children[idx] as HTMLElement | undefined;
+
+                if (!currentChild) {
+                    target.append(incomingChild.cloneNode(true));
+                } else if (!currentChild.isEqualNode(incomingChild)) {
+                    target.replaceChild(incomingChild.cloneNode(true), currentChild);
                 }
-            },
+                return;
+            }
+
+            // — С ключом: ищем по data-key
+            processedKeys.add(key);
+            const currentByKey = target.querySelector<HTMLElement>(
+                `:scope > [data-key="${key}"]`,
+            );
+
+            // 2.1 Новый узел
+            if (!currentByKey) {
+                target.append(incomingChild.cloneNode(true));
+                return;
+            } else if (!currentByKey.isEqualNode(incomingChild)) {
+                target.replaceChild(incomingChild.cloneNode(true), currentByKey);
+            }
+
+            // 2.2 Рекурсивное сравнение
+            this.diffDom(currentByKey, incomingChild);
+        });
+
+        // 3. Удаляем лишние узлы
+        Array.from(target.querySelectorAll<HTMLElement>(
+            ':scope > [data-key]',
+        )).forEach(child => {
+            const key = child.dataset.key;
+            if (key && !processedKeys.has(key)) child.remove();
+        });
+    }
+
+    replaceComponentBySelector(source: IDom, dataKey: string): this {
+        const container = this._options.root.el
+            .querySelector<HTMLElement>(`[data-key="${dataKey}"]`);
+
+        if (!container) {
+            console.warn(`[BaseComponent] container dataKey ".${dataKey}" not found`);
+            return this;
+        }
+
+        // 1. Совпадает ключ контейнера — синхронизируем сразу весь контейнер
+        if (container.dataset.key === source.el.dataset.key) {
+            this.diffDom(container, source.el);
+            return this;
+        }
+
+        // 2. Ищем дочерний элемент по ключу и дельта-обновляем
+        const updatedEl = container.querySelector<HTMLElement>(
+            `[data-key="${source.el.dataset.key}"]`,
         );
 
+        if (!updatedEl) {
+            console.warn(
+                `[BaseComponent] updatedEl dataKey ".${source.el.dataset.key}" not found`,
+            );
+            return this;
+        }
 
+        this.diffDom(updatedEl, source.el);
         return this;
     }
+
 
     private getRoot() {
         const $root = this.createRoot()

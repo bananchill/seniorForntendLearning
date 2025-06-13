@@ -27,7 +27,7 @@ export class Dom implements IDom {
     append(node: Dom | HTMLElement): IDom {
         const element = node instanceof Dom ? node._el : node;
 
-        this._el.appendChild(element);
+        this._el.append(element);
         return this;
     }
 

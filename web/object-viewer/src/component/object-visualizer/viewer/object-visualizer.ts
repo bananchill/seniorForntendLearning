@@ -15,8 +15,10 @@ export default class ObjectVisualizer extends BaseComponent {
     static _selector = "objectVisualizer"
     static readonly _componentOptions: IComponentOptions = {
         attrs: {
-            class: ObjectVisualizer._selector
-        }
+            class: ObjectVisualizer._selector,
+            'data-key': ObjectVisualizer._selector
+        },
+        childElements: []
     }
     private nextLvl: Function | null = null
     private prevLvl: Function | null = null
@@ -64,41 +66,59 @@ export default class ObjectVisualizer extends BaseComponent {
 
     visibleNextLvl() {
         this.nextLvl?.();
-        this.replaceComponentBySelector(this.toHtml(this.getCurrentLvl?.() ?? 0, this.getObject?.()), ObjectVisualizer._selector);
+        const el = this.toHtml(this.getObject?.())
+
+        this.replaceComponentBySelector(el, ObjectVisualizer._selector);
     }
 
     hideCurrentLvl() {
         this.prevLvl?.()
-        this.replaceComponentBySelector(this.toHtml(this.getCurrentLvl?.() ?? 0, this.getObject?.()), ObjectVisualizer._selector);
+        this.replaceComponentBySelector(this.toHtml(this.getObject?.()), ObjectVisualizer._selector,);
     }
 
     paintFirstLvl() {
-        this.appendComponentByClass(this.toHtml(this.getCurrentLvl?.() ?? 0, this.getObject?.()), ObjectVisualizer._selector)
+        this.appendComponentByClass(this.toHtml(this.getObject?.()), ObjectVisualizer._selector)
     }
 
     private getCurrentKey(key: string, lvl = 0) {
         return `${key}_${lvl}`
     }
 
-    toHtml<T = IDom>(lvl = 0, data: any, nestedLvl = 0): T {
-        if (!this.isObject(data)) {
-            console.debug(`${data} is not an object`);
-            return createComponent('div', {attrs: {data: 'No Data'}}) as T;
+    private visibleRecursive(path: string, lvl = 0) {
+        const splitPath = path.split(".");
+        const data = this.getObject?.();
+
+        if (splitPath[0]) {
+            return this.toHtml(data, lvl)
         }
 
-        const root = createComponent('div', {text: '{'});
+        let dataByPath = splitPath.reduce((acc, el) => {
+            if (!acc) {
+                return data[el]
+            }
+            return acc[el]
+        }, {} as Record<string, any>)
+
+        return this.toHtml(dataByPath, lvl)
+    }
+
+    toHtml<T = IDom>(data: any, nestedLvl = 0): T {
+        if (!this.isObject(data)) {
+            return createComponent('div', {attrs: {data: 'No Data'}, childElements: []}) as T;
+        }
+
+        const root = createComponent('div', {text: '{', attrs: {'data-key': `root_${nestedLvl}`}, childElements: []});
 
         Object.entries(data).forEach(([dataKey, dataEl]) => {
-            const currentKey = this.getCurrentKey(dataKey, lvl);
+            const currentKey = this.getCurrentKey(dataKey, nestedLvl);
             const node = this.createNode({dataKey, dataEl, currentKey, nestedLvl});
 
             root.append(node);
-            this.handleNestedObject(node, dataKey, dataEl, lvl);
+            this.handleNestedObject(node, dataKey, dataEl, nestedLvl);
         });
 
         root.el.innerHTML += '}'
 
-        console.log(root.html())
         return root as T;
     }
 
@@ -117,17 +137,21 @@ export default class ObjectVisualizer extends BaseComponent {
             attrs: {'data-key': currentKey},
             data: {},
             text: '',
-            childElement: undefined,
+            childElements: [createComponent('div', {
+                text: `${dataKey}:`,
+                childElements: []
+            })],
         };
         if (this.isObject(dataEl)) {
             const lvl = this.getCurrentLvl?.() ?? 0;
-            options.text = `${dataKey}: {`
-
-            if (lvl > nestedLvl && this.getHistoryElById?.(dataKey)) {
+            if (lvl > nestedLvl && this.getHistoryElById?.(currentKey)) {
                 nestedLvl += 1;
-                options.childElement = this.toHtml(nestedLvl, dataEl);
+                options.childElements?.push(this.toHtml(dataEl, nestedLvl));
+            } else {
+                options.childElements?.push(createComponent('div', {text: "{ ... }", childElements: []}));
             }
-            options.text += '}';
+        } else if (dataKey === "$ref") {
+            options.childElements?.push(this.visibleRecursive(dataEl as string, nestedLvl));
         } else {
             options.text = `${dataKey}: ${JSON.stringify(dataEl)}`;
         }

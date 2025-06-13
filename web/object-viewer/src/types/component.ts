@@ -31,5 +31,5 @@ export interface IComponentOptions {
 
     text?: string | number | boolean;
 
-    childElement?: IDom;
+    childElements?: IDom[];
 }

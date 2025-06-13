@@ -3,9 +3,11 @@ import {EButtonAction, IButtonOptions} from "@/component/base/button/type.button
 import {IComponentOptions} from "@types";
 
 export default class ButtonHidden extends Button {
+    static _selector = 'button-hidden';
     static readonly _componentOptions: IComponentOptions = {
         attrs: {
-            class: "button"
+            class: "button",
+            'data-key': ButtonHidden._selector
         }
     }
 
@@ -20,6 +22,10 @@ export default class ButtonHidden extends Button {
 
 
     onClick(event: Event): void {
+        const target = event.target as HTMLElement
+        if (target.parentElement?.dataset.key !== ButtonHidden._selector) {
+            return
+        }
         event.preventDefault()
         event.stopImmediatePropagation()
         this._options.bus.emit(EButtonAction.Hidden, event)
