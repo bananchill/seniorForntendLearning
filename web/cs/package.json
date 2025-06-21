@@ -1,0 +1,20 @@
+{
+  "name": "cs",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@8.12.0",
+  "workspaces": [
+    "cs2-back",
+    "cs2-web"
+  ],
+  "scripts": {
+    "dev": "pnpm -r --filter \"./cs2-*\" run dev",
+    "build": "pnpm -r --filter \"./cs2-*\" run build",
+    "lint": "pnpm -r lint",
+    "postinstall": "pnpm dlx husky install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "husky": "^9.0.0"
+  }
+}
