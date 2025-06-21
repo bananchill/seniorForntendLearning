@@ -1,4 +1,0 @@
-packages:
-  - 'frontend'
-  - 'e2e'
-  - 'api'
