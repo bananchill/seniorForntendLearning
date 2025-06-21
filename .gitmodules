@@ -1,0 +1,4 @@
+[submodule "cs-parser"]
+	path = cs-parser
+	url = git@github.com:bananchill/cs-parser.git
+	branch = master
