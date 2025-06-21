@@ -62,12 +62,12 @@
 
 ## 5. Технологический стек
 
-| Зона     | Инструменты                                                                                |
-| -------- |--------------------------------------------------------------------------------------------|
-| Backend  | **Node 18, NestJS 10, TypeScript 5, PostgreSQL 15, Redis 7, BullMQ, Docker, Jest**     |
-| Frontend | **React 18, Vite 5, TypeScript 5, Tailwind CSS 3, socket, React Query, Vitest**  |
-| DevOps   | GitHub Actions, Docker Compose (dev)             |
-| QA       | Jest, Supertest (E2E), React Testing Library, Playwright (UI)                              |
+| Зона     | Инструменты                                                                                  |
+| -------- |----------------------------------------------------------------------------------------------|
+| Backend  | **Node 18, NestJS 10, TypeScript 5, microOrm, PostgreSQL 15, Redis 7, BullMQ, Docker, Jest** |
+| Frontend | **React 18, Vite 5, TypeScript 5, Tailwind CSS 3, socket, React Query, Vitest**              |
+| DevOps   | GitHub Actions, Docker Compose (dev)                                                         |
+| QA       | Jest, Supertest (E2E), React Testing Library, Playwright (UI)                                |
 
 ---
 
