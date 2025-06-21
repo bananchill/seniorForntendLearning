@@ -3,3 +3,8 @@ coverage/*
 .env
 yarn.lock
 .env.local
+
+web/cs/pnpm-lock.yaml
+web/cs/node_modules
+web/cs/frontend/node_modules
+web/cs/
