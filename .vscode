@@ -1,0 +1,209 @@
+{
+  "Forward for loop": {
+    "prefix": "fori",
+    "body": [
+      "for (let ${1:i} = 0; $1 < ${2:array}.length; $1++) {",
+      "    $0",
+      "}"
+    ],
+    "description": "Forward for loop"
+  },
+  "Reverse for loop": {
+    "prefix": "forr",
+    "body": [
+      "for (let ${1:i} = ${2:array}.length - 1; $1 >= 0; $1--) {",
+      "    $0",
+      "}"
+    ],
+    "description": "Reverse for loop"
+  },
+  "For each loop": {
+    "prefix": "foreach",
+    "body": [
+      "${1:array}.forEach((${2:item}) => {",
+      "    $0",
+      "});"
+    ],
+    "description": "forEach loop"
+  },
+  "For of loop": {
+    "prefix": "forof",
+    "body": [
+      "for (const ${1:item} of ${2:array}) {",
+      "    $0",
+      "}"
+    ],
+    "description": "For...of loop"
+  },
+
+  // ==== КОНСОЛЬ ====
+  "Console log": {
+    "prefix": "clg",
+    "body": ["console.log($1);"],
+    "description": "Console log"
+  },
+  "Console dir": {
+    "prefix": "cdir",
+    "body": ["console.dir($1, { depth: null });"],
+    "description": "Console dir"
+  },
+  "Console time": {
+    "prefix": "ctime",
+    "body": [
+      "console.time('${1:label}');",
+      "$0",
+      "console.timeEnd('$1');"
+    ],
+    "description": "Console time"
+  },
+  "Console error": {
+    "prefix": "cerror",
+    "body": ["console.error($1);"],
+    "description": "Console error"
+  },
+
+  // ==== УТИЛИТЫ ====
+  "Try catch": {
+    "prefix": "tryc",
+    "body": [
+      "try {",
+      "    $0",
+      "} catch (error) {",
+      "    console.error(error);",
+      "}"
+    ],
+    "description": "Try/catch block"
+  },
+  "Function": {
+    "prefix": "fn",
+    "body": [
+      "function ${1:name}(${2:params}) {",
+      "    $0",
+      "}"
+    ],
+    "description": "Function template"
+  },
+  "Promise": {
+    "prefix": "prom",
+    "body": [
+      "return new Promise((resolve, reject) => {",
+      "    $0",
+      "});"
+    ],
+    "description": "Promise"
+  },
+  "Set timeout": {
+    "prefix": "settimeout",
+    "body": ["setTimeout(() => {", "    $0", "}, ${1:1000});"],
+    "description": "setTimeout"
+  },
+  "Set interval": {
+    "prefix": "setinterval",
+    "body": ["setInterval(() => {", "    $0", "}, ${1:1000});"],
+    "description": "setInterval"
+  },
+
+  // ==== TYPESCRIPT ====
+  "Type Interface": {
+    "prefix": "tif",
+    "body": [
+      "interface ${1:Name} {",
+      "    $0",
+      "}"
+    ],
+    "description": "TypeScript Interface"
+  },
+  "Enum": {
+    "prefix": "tenum",
+    "body": [
+      "enum ${1:Name} {",
+      "    $0",
+      "}"
+    ],
+    "description": "TypeScript Enum"
+  },
+  "TypeScript Class": {
+    "prefix": "tclass",
+    "body": [
+      "class ${1:Name} {",
+      "    constructor(${2:args}) {",
+      "        $0",
+      "    }",
+      "}"
+    ],
+    "description": "TypeScript Class"
+  },
+
+  // ==== АСИНХРОНКА ====
+  "Async function": {
+    "prefix": "asyncf",
+    "body": [
+      "async function ${1:name}(${2:params}) {",
+      "    try {",
+      "        $0",
+      "    } catch (error) {",
+      "        console.error(error);",
+      "    }",
+      "}"
+    ],
+    "description": "Async function"
+  },
+  "Fetch": {
+    "prefix": "fetch",
+    "body": [
+      "const response = await fetch('${1:url}');",
+      "const data = await response.json();",
+      "$0"
+    ],
+    "description": "Fetch API"
+  },
+  "Await all": {
+    "prefix": "awaitall",
+    "body": [
+      "const [${1:result1}, ${2:result2}] = await Promise.all([",
+      "    ${3:promise1},",
+      "    ${4:promise2}",
+      "]);",
+      "$0"
+    ],
+    "description": "Await multiple promises"
+  },
+
+  // ==== МАССИВЫ ====
+  "Map": {
+    "prefix": "map",
+    "body": [
+      "${1:array}.map((${2:item}) => {",
+      "    $0",
+      "});"
+    ],
+    "description": "Array map"
+  },
+  "Filter": {
+    "prefix": "filter",
+    "body": [
+      "${1:array}.filter((${2:item}) => {",
+      "    $0",
+      "});"
+    ],
+    "description": "Array filter"
+  },
+  "Reduce": {
+    "prefix": "reduce",
+    "body": [
+      "${1:array}.reduce((${2:acc}, ${3:item}) => {",
+      "    $0",
+      "}, ${4:initialValue});"
+    ],
+    "description": "Array reduce"
+  },
+  "Find": {
+    "prefix": "find",
+    "body": [
+      "${1:array}.find((${2:item}) => {",
+      "    $0",
+      "});"
+    ],
+    "description": "Array find"
+  }
+}
