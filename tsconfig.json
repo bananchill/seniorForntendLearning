@@ -4,7 +4,8 @@
 		"target": "ES2022",
 		"strict": true,
 		"esModuleInterop": true,
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"isolatedModules": true
 	},
 	"exclude": ["node_modules", "dist"]
 }
