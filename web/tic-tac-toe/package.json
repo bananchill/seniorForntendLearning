@@ -1,0 +1,13 @@
+{
+  "name": "react.dev",
+  "version": "0.0.0",
+  "main": "/src/index.js",
+  "scripts": {
+    "dev:tic-tac-toe": "vite --config ./vite.config.ts --open",
+    "build:tic-tac-toe": "vite build --config ./vite.config.ts",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
