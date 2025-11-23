@@ -8,3 +8,5 @@ web/cs/pnpm-lock.yaml
 web/cs/node_modules
 web/cs/frontend/node_modules
 web/cs/
+
+web/*/node_modules
