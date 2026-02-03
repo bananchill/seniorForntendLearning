@@ -7,7 +7,5 @@
     "build:tic-tac-toe": "vite build --config ./vite.config.ts",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  },
-  "dependencies": {},
-  "devDependencies": {}
+  }
 }
