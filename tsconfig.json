@@ -1,11 +1,15 @@
 {
 	"compilerOptions": {
-		"module": "ESNext",
+		"module": "CommonJS",
 		"target": "ES2022",
 		"strict": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
-		"isolatedModules": true
+		"isolatedModules": true,
+		"resolveJsonModule": true,
+		"types": ["node"],
+		"noUncheckedIndexedAccess": true,
+		"exactOptionalPropertyTypes": true
 	},
 	"exclude": ["node_modules", "dist"]
 }
