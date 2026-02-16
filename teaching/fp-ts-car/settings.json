@@ -1,1 +1,8 @@
-[]
+{
+  "minDistance": 100,
+  "maxDistance": 300,
+  "minYear": 2001,
+  "maxYear": 20004,
+  "carBrand": ["BMW", "Audi", "Ford"],
+  "engine": ["Diesel", "Petrol", "Electro"]
+}

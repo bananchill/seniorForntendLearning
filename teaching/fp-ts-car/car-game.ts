@@ -1,19 +1,19 @@
-//  import { sequenceS } from 'fp-ts/Apply';
-// import * as Console from 'fp-ts/Console';
-// import * as Eq from 'fp-ts/Eq';
+//  import { sequenceS } from 'p-ts/Console';
+import * as Eq from 'fp-ts/Apply'
+import * as Console from 'fp-ts/Console'
 import * as IO from 'fp-ts/IO'
 import * as IOE from 'fp-ts/IOEither'
 import * as E from 'fp-ts/Either'
 import * as J from 'fp-ts/Json'
 // import { concatAll } from 'fp-ts/Monoid';
 // import * as NonEmptyArray from 'fp-ts/NonEmptyArray';
+import * as RA from 'fp-ts/ReadonlyArray'
 // import * as Ord from 'fp-ts/Ord';
 // import * as R from 'fp-ts/Random';
 import * as RTE from 'fp-ts/ReaderTaskEither'
 import { flow, pipe } from 'fp-ts/function'
-import * as O from 'fp-ts/Option'
 // import * as N from 'fp-ts/number';
-// import * as t from 'io-ts';
+import * as t from 'io-ts'
 // import * as tt from 'io-ts-types';
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
@@ -33,138 +33,117 @@ import * as NEA from 'fp-ts/NonEmptyArray'
  * - у них меньше пробег(с допустимой разницей в 100 км)
  */
 
+const CarBrand = {
+  BMW: 'BMW',
+  Audi: 'Audi',
+  Ford: 'Ford',
+} as const
+type TCarBrand = (typeof CarBrand)[keyof typeof CarBrand]
+
+const CarEngineBrand = {
+  Diesel: 'Diesel',
+  Petrol: 'Petrol',
+  Electro: 'Electro',
+} as const
+type TCarEngineBrand = (typeof CarEngineBrand)[keyof typeof CarEngineBrand]
+
 const MAX_ROUNDS = 10
 
-interface Car {
-  year: string
-  brand: any
-  engineBrand: string
-  distance: number
+const Settings = t.type({
+  minDistance: t.number,
+  maxDistance: t.number,
+  minYear: t.number,
+  maxYear: t.number,
+  carBrand: t.keyof(CarBrand),
+  engine: t.keyof(CarEngineBrand),
+})
+type TSettings = t.TypeOf<typeof Settings>
+
+const CarBrandRate = {
+  [CarBrand.BMW]: 3,
+  [CarBrand.Audi]: 2,
+  [CarBrand.Ford]: 1,
+} as const
+
+const CarEngineBrandRate = {
+  [CarEngineBrand.Diesel]: 3,
+  [CarEngineBrand.Petrol]: 2,
+  [CarEngineBrand.Electro]: 1,
 }
+
+const Car = t.type({
+  year: t.number,
+  brand: t.keyof(CarBrand),
+  engineBrand: t.keyof(CarEngineBrand),
+  distance: t.number,
+})
+
+type TCar = t.TypeOf<typeof Car>
+// type ReadonlyCars = ReadonlyArray<Car>
 
 type DefaultError<TypeError, ErrorInfo = Error> = {
   readonly type: TypeError
   readonly error: ErrorInfo
 }
-enum ErrorType {
-  JsonStringifyError = 'JsonStringifyError',
-  ReadFileError = 'ReadFileError',
-  InvalidCarsSettingsError = 'InvalidCarsSettingsError',
+
+class ReadFileError extends Error {
+  constructor(message: string) {
+    super(message)
+  }
 }
 
-type JsonStringifyError = DefaultError<ErrorType.JsonStringifyError>
-
-type ReadFileError = DefaultError<ErrorType.ReadFileError>
-
-type InvalidCarsSettingsError = DefaultError<ErrorType.InvalidCarsSettingsError>
-
-const settingsPath = (pathFile: string) => path.join(__dirname, pathFile)
-
-const readFileSyncIOE = (path: string): E.Either<ReadFileError, string> =>
-  flow(
-    IOE.tryCatch(() => readFileSync(path, 'utf-8'), E.toError),
-    E.mapLeft<Error, ReadFileError>((e) => ({
-      type: ErrorType.ReadFileError,
-      error: E.toError(e),
-    })),
-  )()
-
-const parseJsonIOE = (data: string) =>
-  pipe(
-    data,
-    J.parse,
-    E.bimap<unknown, JsonStringifyError, unknown, Car[]>(
-      (e) => ({
-        type: ErrorType.JsonStringifyError,
-        error: E.toError(String(e)),
-      }),
-      (c) => c as Car[],
-    ),
-  )
-const isNonEmptyArray = <T>(input: T) => Array.isArray(input) && !!input?.length
-
-const checkCarsSettings = (cars: Car[]): E.Either<InvalidCarsSettingsError, Car[]> => {
-  return isNonEmptyArray<Car[]>(cars)
-    ? E.right(cars)
-    : E.left({
-        type: ErrorType.InvalidCarsSettingsError,
-        error: E.toError('Cars must be non-empty array'),
-      })
+class ReadFileError extends Error {
+  constructor(message: string) {
+    super(message)
+  }
 }
 
-const loadSettings = (): E.Either<ReadFileError | JsonStringifyError, Car[]> => {
-  const result = pipe(
-    './settings.json',
-    settingsPath,
-    readFileSyncIOE,
-    E.flatMap(parseJsonIOE),
-  )
+const RoundState = t.type({
+  car1: Car,
+  car2: Car,
+  answer: t.union([t.literal(1), t.literal(2)]),
+})
+type TRoundState = t.TypeOf<typeof RoundState>
 
-  return result
-}
+const pathFile = path.join(__dirname, './settings.json')
 
-const generateRounds = (
-  cars: Car[],
-): IOE.IOEither<InvalidCarsSettingsError, readonly [Car, Car][]> =>
-  pipe(
-    cars,
-    checkCarsSettings,
-    IOE.fromEither,
-    IOE.bimap(
-      (e) =>
-        e instanceof Error
-          ? (e as InvalidCarsSettingsError)
-          : ({
-              type: ErrorType.InvalidCarsSettingsError,
-              error: E.toError('Cars must be non-empty array'),
-            } as InvalidCarsSettingsError),
-      (neaCars) => {
-        const setRounds = new Set<string>()
-        const rounds: [Car, Car][] = []
-        for (let i = 0; i < MAX_ROUNDS; i++) {
-          for (let j = i + 1; j < MAX_ROUNDS; j++) {
-            if (
-              !neaCars[i] ||
-              !neaCars[j] ||
-              setRounds.has(JSON.stringify([neaCars[i], neaCars[j]]))
-            ) {
-              continue
-            }
-            const round: [Car, Car] = [neaCars[i]!, neaCars[j]!]
+const readFileSyncIOE = IOE.tryCatch(
+  () => readFileSync(pathFile, 'utf-8'),
+  (e) => new ReadFileError(String(e)),
+)
 
-            setRounds.add(JSON.stringify(round))
-            rounds.push(round)
-          }
-        }
+const settingsDecode = flow(
+  E.tryCatch(Settings.decode, (e) => new ReadFileError(String(e))),
+  IOE.FromEither,
+)
 
-        return rounds
-      },
-    ),
-  )
-
-const logs = (data: any) => {
-  console.log(data)
-  return data
-}
+const loadSettings = pipe(readFileSyncIOE)
+const log = (data: any) => Console.log(data())
 const run = pipe(
   loadSettings,
-  IOE.flatMap(generateRounds),
+  log,
+  // IOE.flatMap(generateRounds),
   // IOE.orElse(logs),
-  RTE.fromIOEither,
+  // RTE.fromIOEither,
   // RTE.flatMap(runGame),
   // RTE.map(calculateScore),
   // RTE.flatMap(finishGame),
 )
 
-run()
+;(async () => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  })
+  //const main = run(rl)
+  const result = run()
+  // console.log(result)
 
-// ;(async () => {
-//   const rl = readline.createInterface({
-//     input: process.stdin,
-//     output: process.stdout,
-//   })
+  // const result = await main()
 
-//   const main = run(rl)
+  // if (E.isLeft(result)) {
+  // console.error(result.left)
+  // }
 
-//   await main()
-// })()
+  rl.close()
+})()
